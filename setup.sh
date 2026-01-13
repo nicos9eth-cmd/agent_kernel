@@ -43,3 +43,25 @@ EOF
 
 echo "✨ [TERMINÉ] Ton infrastructure est prête dans le dossier : $(pwd)"
 echo "👉 Pour tester : sudo chroot rootfs python3 /home/check_sdk.py"
+
+# --- SECTION VALIDATION ---
+echo "🔍 Lancement de la checklist de validation..."
+
+# 1. Test Réseau
+if sudo chroot rootfs ping -c 1 google.com > /dev/null 2>&1; then
+    echo "✅ Réseau : OK"
+else
+    echo "❌ Réseau : ÉCHEC (Vérifie ta connexion)"
+fi
+
+# 2. Test SDK Hyperliquid
+if sudo chroot rootfs python3 /home/check_sdk.py | grep -q "SUCCESS"; then
+    echo "✅ SDK Hyperliquid : OK"
+else
+    echo "❌ SDK Hyperliquid : ÉCHEC"
+fi
+
+# --- SECTION IA (Préparation) ---
+echo "🤖 Installation d'Ollama (Hôte)..."
+# On installe Ollama sur la machine principale pour piloter la VM
+curl -fsSL https://ollama.com/install.sh | sh
